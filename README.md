@@ -61,8 +61,8 @@ func main() {
 	c := parallelunranking.Stirling2Columns(10, 5).Col1[10]
 	c.Sub(&c, big.NewInt(1))
 	for k2 := big.NewInt(0); k2.Cmp(&c) < 1; k2.Add(k2, big.NewInt(1)) {
-        // 10 stands for [|1,10|], 5 for 5 blocks, *k2 to iterate over set partitions
-        // and 4 stands to use S3V5 (there is a minus one shift because of tabs index, you should always use it)
+        // 10 stand for [|1,10|], 5 for 5 blocks, *k2 to iterate over sets partitions
+        // and for to use S3V5 (you should always use it)
 		fmt.Println(parallelunranking.UnrankDicho(10, 5, *k2, 4), k2)
 	}
 }
@@ -89,6 +89,39 @@ func main() {
 [Documentation](https://pkg.go.dev/github.com/AMAURYCU/setpartition_unrank)
 
 
+## Executable application
+
+The git repo has a ```main.go```file that can be executed entering this command : 
+
+```go run main.go -operation [A/R/G] -mode [P/S] [arguments]```
+where : 
+```
+Operations:
+  A: to generate all partitions of n1 in n2 non-empty disjoints subsets - Requires 2 numeric arguments
+  R: to randomly pickup one partition of n1 in n2 non-empty disjoints subsets - Requires 2 numeric arguments
+  G: to have an overview of the performance of the algorithm 
+  partitionning n1 in n2 non-empty disjoints subsets with n3 points - Requires 3 numeric arguments
+Modes:
+  P: parallel
+  S: sequential
+  -mode string
+    	Specify mode: P or S
+  -operation string
+    	Specify operation: A, R or G
+```
+For example : 
+```
+go run main.go -operation R -mode P 50 5
+```
+
+will output:
+```
+[[1 5 11 32 34 39 43 44 45 48] [2 3 7 8 12 14 25 28 29 37] 
+[4 20 22 24 26 35 38 47] [6 9 10 13 19 33 36 40] 
+[15 16 17 18 21 23 27 30 31 41 42 46 49 50]]
+```
+
+warning : the ```G``` operation does not require ```-mode``` arguments
 ## Related
 
 This project is related to the implementation of our paper : 
