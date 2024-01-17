@@ -61,8 +61,8 @@ func main() {
 	c := parallelunranking.Stirling2Columns(10, 5).Col1[10]
 	c.Sub(&c, big.NewInt(1))
 	for k2 := big.NewInt(0); k2.Cmp(&c) < 1; k2.Add(k2, big.NewInt(1)) {
-        // 10 stand for [|1,10|], 5 for 5 blocks, *k2 to iterate over sets partitions
-        // and for to use S3V5 (you should always use it)
+        // 10 stands for [|1,10|], 5 for 5 blocks, *k2 to iterate over set partitions
+        // and 4 stands to use S3V5 (there is a minus one shift because of tabs index, you should always use it)
 		fmt.Println(parallelunranking.UnrankDicho(10, 5, *k2, 4), k2)
 	}
 }
