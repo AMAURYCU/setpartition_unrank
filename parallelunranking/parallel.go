@@ -1,3 +1,8 @@
+// Package parallelunranking provides functions to unrank set partitions lexicographicaly
+//
+// The main function of this package is the function UnrankDicho that generates
+// a set partition in exactly k part in the lexicographic order.
+// Our package provides a formula with 4 levels of optimization and paralellism to avoid precomputation step
 package parallelunranking
 
 import (
@@ -5,6 +10,7 @@ import (
 	"math/big"
 	"strings"
 	"time"
+
 	"github.com/AMAURYCU/setpartition_unrank/types"
 )
 
@@ -16,26 +22,15 @@ var StirlingColumn1 []big.Int
 var TimePreviousColumn []int64
 var TimePreviousColumnWithK []int64
 
-var vs3 []func(n int, k int, swap bool, d int) big.Int
+var vs3 = [5](func(n, k int, swap bool, d int) big.Int){s3v1, s3v2, s3v3, s3v4, s3v5}
 var TimeTotal int64
 
-func Init() {
-	vs3 = make([]func(n, k int, swap bool, d int) big.Int, 5)
-
-	vs3[0] = s3v1
-	vs3[1] = s3v2
-	vs3[2] = s3v3
-	vs3[3] = s3v4
-	vs3[4] = s3v5
-}
-
+// Convert an int list into a string in python format
 func ListToString(liste []int64) string {
-	// Converting elements to strings
 	elements := make([]string, len(liste))
 	for i, v := range liste {
 		elements[i] = fmt.Sprintf("%d", v)
 	}
-	// Concatenation with commas
 	str := "[" + strings.Join(elements, ", ") + "]"
 
 	return str
@@ -48,15 +43,13 @@ func min(a, b int) int {
 	return b
 }
 
-//TODO : make a comment
 /*
-	Brief explanation of what this method is doing
-	n - 
-	k - 
-	swap -
-	d - 
-	u -
-	b - 
+Direct implementation of the s3 formula (read the readme section Related propositon 7 for more details)
+n - number of elements in the set
+k - number of blocks desired
+swap - flag
+d - last element of the unranked prefix
+u - length of the prefix
 */
 func s3v1(n, k int, swap bool, d int) big.Int {
 	if d < 0 {
@@ -87,16 +80,15 @@ func s3v1(n, k int, swap bool, d int) big.Int {
 	return *res
 }
 
-//TODO : make a comment
 /*
-	Brief explanation of what this method is doing here
-	n - 
-	k - 
-	swap -
-	d - 
-	u -
-	b - 
-	tmp -
+	    Implementation of the s3 formula (read the readme section Related proposition 7 for more details)
+		taking in consideration the symmetry of the binomials coefficients to improve the
+		computation time of the formula.
+		n - number of elements in the set
+		k - number of blocks desired
+		swap - flag
+		d - last element of the unranked prefix
+		u - length of the prefix
 */
 func s3v2(n, k int, swap bool, d int) big.Int {
 	if d < 0 {
@@ -146,17 +138,13 @@ func s3v2(n, k int, swap bool, d int) big.Int {
 	return *res
 }
 
-//TODO : make a comment
 /*
-	Brief explanation of what this method is doing
-	n - 
-	k - 
-	swap -
-	d - 
-	u -
-	b - 
-	pm1 - 
-	tmp - 
+	    Direct implementation of the s3 formula (read the readme section Related proposition 9 for more details)
+		n - number of elements in the set
+		k - number of blocks desired
+		swap - flag
+		d - last element of the unranked prefix
+		u - length of the prefix
 */
 func s3v3(n, k int, swap bool, d int) big.Int {
 	if d < 0 {
@@ -199,17 +187,14 @@ func s3v3(n, k int, swap bool, d int) big.Int {
 	return *res
 }
 
-//TODO : make a comment
 /*
-	Brief explanation of what this method is doing
-	n - 
-	k - 
-	swap -
-	d - 
-	u -
-	b - 
-	pm1 - 
-	tmp -
+	    Direct implementation of the s3 formula (read the readme section Related proposition 9 for more details)
+		taking in acount the symmetry of the binomial coefficients to improve computation time.
+		n - number of elements in the set
+		k - number of blocks desired
+		swap - flag
+		d - last element of the unranked prefix
+		u - length of the prefix
 */
 func s3v4(n, k int, swap bool, d int) big.Int {
 	if d < 0 {
@@ -284,13 +269,12 @@ func s3v4(n, k int, swap bool, d int) big.Int {
 	return res
 }
 
-//TODO : make a comment
 /*
-	Brief explanation of what this method is doing
-	n - 
-	k - 
-	swap -
-	d - 
+	    Take the best of s3v4 and s3v2
+		n - number of elements in the set
+		k - number of blocks desired
+		swap - flag
+		d - last element of the unranked prefix
 */
 func s3v5(n, k int, swap bool, d int) big.Int {
 	if 2*d < n {
@@ -300,6 +284,19 @@ func s3v5(n, k int, swap bool, d int) big.Int {
 	}
 }
 
+//  Unrank set partition lexicographicaly.
+/*
+This function is the main function of the package and takes 4 arguments as parameters :
+- n : int, the cardinal of the set to be partitioned.
+- k : int, the number of desired blocks in the result.
+- rank : big.Int, the rank of the desired set partition in the lexicographical order.
+- whichS3: [|0,4|], the desired version of S3 formula to use (4 is the fastest, 0 is the slowest).
+
+Example usage:
+
+    result := parallelunranking.UnrankDicho(5, 3, *big.NewInt(10), 4)
+    fmt.Println(result) // Output: [[1 2 3] [4] [5]]
+*/
 func UnrankDicho(n, k int, rank big.Int, whichS3 int) [][]int {
 	listK := make([]int64, 0)
 	blockSizes := make([]int64, 0)
@@ -366,11 +363,11 @@ func UnrankDicho(n, k int, rank big.Int, whichS3 int) [][]int {
 		swap = !swap
 	}
 	res = append(res, make([]int, n))
-	res = LexicographicPermutationUnrank(n0, res)
+	res = lexicographicPermutationUnrank(n0, res)
 	return res
 }
 
-func LexicographicPermutationUnrank(n int, Pos [][]int) [][]int {
+func lexicographicPermutationUnrank(n int, Pos [][]int) [][]int {
 	L := make([]int, n)
 	for i := 0; i < n; i++ {
 		L[i] = i + 1
@@ -414,7 +411,6 @@ func computePreviousColumn(column []big.Int, n, k int, resultChan chan []big.Int
 	TimePreviousColumn = append(TimePreviousColumn, endTime-startTime)
 	resultChan <- res
 
-	return
 }
 
 func optimizedBlockDicho(n, k int, swap bool, rank big.Int, whichS3 int) ([]int, big.Int) {
@@ -477,7 +473,8 @@ func optimizedBlockDicho(n, k int, swap bool, rank big.Int, whichS3 int) ([]int,
 	return res, *acc
 }
 
-func Stirling2Columns(n, k int) *types.CoupleColumns { 
+// Return the k and the k-1th stirling triangle collumn until the line n.
+func Stirling2Columns(n, k int) *types.CoupleColumns {
 	// renvoie 2 colonnes de Stirling, k-1 et k jusqu'aux lignes n et n
 	// on suppose k >= 1
 	// il faut n-k+1 valeurs dans chaque colonne

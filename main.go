@@ -1,13 +1,14 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"math/big"
 	"math/rand"
 	"os"
 	"strconv"
 	"time"
-	"flag"
+
 	"github.com/AMAURYCU/setpartition_unrank/parallelunranking"
 	"github.com/AMAURYCU/setpartition_unrank/precalcul"
 	"github.com/AMAURYCU/setpartition_unrank/statistic"
@@ -59,7 +60,6 @@ func handleOperationA(mode string, args []string) {
 
 	switch mode {
 	case "P":
-		parallelunranking.Init()
 		c := parallelunranking.Stirling2Columns(n, k).Col1[n]
 		c.Sub(&c, big.NewInt(1))
 		for k2 := big.NewInt(0); k2.Cmp(&c) < 1; k2.Add(k2, big.NewInt(1)) {
@@ -101,7 +101,6 @@ func handleOperationR(mode string, args []string) {
 
 	switch mode {
 	case "P":
-		parallelunranking.Init()
 		c := parallelunranking.Stirling2Columns(n, k).Col1[n]
 		c.Sub(&c, big.NewInt(1))
 		r.Rand(rg, &c)
@@ -122,7 +121,7 @@ func handleOperationR(mode string, args []string) {
 }
 
 func handleOperationG(args []string) {
-	
+
 	if len(args) != 3 {
 		fmt.Println("Error: Operation G requires exactly 3 arguments.")
 		printUsageAndExit()
@@ -136,8 +135,6 @@ func handleOperationG(args []string) {
 		fmt.Println("Error: Arguments for Operation G must be numeric.")
 		printUsageAndExit()
 	}
-
-	parallelunranking.Init()
 	precalcul.Init()
 	statistic.Stat(n, k, r, true)
 	a, b, c := statistic.Graph3d(n, 10, 10, r)

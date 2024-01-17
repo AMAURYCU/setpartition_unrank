@@ -2,7 +2,6 @@ package precalcul
 
 import (
 	"math/big"
-	"github.com/AMAURYCU/setpartition_unrank/parallelunranking"
 )
 
 /*_____________________________PRE CALCULS____________________________________*/
@@ -12,6 +11,23 @@ var vs3pre []func(n, k, d int) *big.Int
 func Init() {
 	vs3pre = append(vs3pre, s3v5pre)
 
+}
+
+func lexicographicPermutationUnrank(n int, Pos [][]int) [][]int {
+	L := make([]int, n)
+	for i := 0; i < n; i++ {
+		L[i] = i + 1
+	}
+	var P [][]int
+	for b := 0; b < len(Pos); b++ {
+		p := []int{}
+		for _, i := range Pos[b] {
+			p = append(p, L[i])
+			L = append(L[:i], L[i+1:]...)
+		}
+		P = append(P, p)
+	}
+	return P
 }
 
 func UnrankDichoPre(n, k int, rank big.Int, vs3 int) [][]int {
@@ -38,7 +54,7 @@ func UnrankDichoPre(n, k int, rank big.Int, vs3 int) [][]int {
 	}
 
 	res = append(res, make([]int, n))
-	res = parallelunranking.LexicographicPermutationUnrank(n0, res)
+	res = lexicographicPermutationUnrank(n0, res)
 
 	return res
 
