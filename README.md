@@ -6,8 +6,9 @@ A Go library to lexicographicaly unrank set partitions
 
 ## Authors
 
-- Antoine GENITRINI, CNRS, LIP6
 - Amaury CURIEL, CNRS, LIP6
+- Antoine GENITRINI, CNRS, LIP6
+
 
 
 ## Installation
