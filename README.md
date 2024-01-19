@@ -67,10 +67,9 @@ func main() {
 		fmt.Println(parallelunranking.UnrankDicho(10, 5, *k2, 4), k2)
 	}
 }
-//output : 
-/*.
-.
-.
+//output (the last lines): 
+/*
+...
 [[1 10] [2 9] [3 7 8] [4] [5 6]] 42515
 [[1 10] [2 9] [3 7 8] [4 5] [6]] 42516
 [[1 10] [2 9] [3 7 8] [4 6] [5]] 42517
