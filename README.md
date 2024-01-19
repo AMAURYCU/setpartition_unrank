@@ -41,7 +41,7 @@ where
 ```
 XXXXX
 ```
-should be replaced with one of 
+should be replaced with one of the following command 
 ```
 parallelunranking //to run the efficient parallel algorithm
 precalcul //to run the algorithm with precomputation step
