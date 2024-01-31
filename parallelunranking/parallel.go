@@ -8,7 +8,6 @@ package parallelunranking
 import (
 	"fmt"
 	"math/big"
-	"strings"
 	"time"
 
 	"github.com/AMAURYCU/setpartition_unrank/types"
@@ -22,19 +21,8 @@ var StirlingColumn1 []big.Int
 var TimePreviousColumn []int64
 var TimePreviousColumnWithK []int64
 
-var vs3 = [5](func(n, k int, swap bool, d int) big.Int){s3v1, s3v2, s3v3, s3v4, s3v5}
+var vs3 = [5](func(n, k int, swap bool, d int) big.Int){S3v1, S3v2, S3v3, S3v4, S3v5}
 var TimeTotal int64
-
-// Convert an int list into a string in python format
-func ListToString(liste []int64) string {
-	elements := make([]string, len(liste))
-	for i, v := range liste {
-		elements[i] = fmt.Sprintf("%d", v)
-	}
-	str := "[" + strings.Join(elements, ", ") + "]"
-
-	return str
-}
 
 func min(a, b int) int {
 	if a < b {
@@ -51,7 +39,7 @@ swap - flag
 d - last element of the unranked prefix
 u - length of the prefix
 */
-func s3v1(n, k int, swap bool, d int) big.Int {
+func S3v1(n, k int, swap bool, d int) big.Int {
 	if d < 0 {
 		return *big.NewInt(0)
 	}
@@ -90,7 +78,7 @@ func s3v1(n, k int, swap bool, d int) big.Int {
 		d - last element of the unranked prefix
 		u - length of the prefix
 */
-func s3v2(n, k int, swap bool, d int) big.Int {
+func S3v2(n, k int, swap bool, d int) big.Int {
 	if d < 0 {
 		return *big.NewInt(0)
 	}
@@ -146,7 +134,7 @@ func s3v2(n, k int, swap bool, d int) big.Int {
 		d - last element of the unranked prefix
 		u - length of the prefix
 */
-func s3v3(n, k int, swap bool, d int) big.Int {
+func S3v3(n, k int, swap bool, d int) big.Int {
 	if d < 0 {
 		return *big.NewInt(0)
 	}
@@ -196,7 +184,7 @@ func s3v3(n, k int, swap bool, d int) big.Int {
 		d - last element of the unranked prefix
 		u - length of the prefix
 */
-func s3v4(n, k int, swap bool, d int) big.Int {
+func S3v4(n, k int, swap bool, d int) big.Int {
 	if d < 0 {
 		return *big.NewInt(0)
 	}
@@ -276,11 +264,11 @@ func s3v4(n, k int, swap bool, d int) big.Int {
 		swap - flag
 		d - last element of the unranked prefix
 */
-func s3v5(n, k int, swap bool, d int) big.Int {
+func S3v5(n, k int, swap bool, d int) big.Int {
 	if 2*d < n {
-		return s3v4(n, k, swap, d)
+		return S3v4(n, k, swap, d)
 	} else {
-		return s3v2(n, k, swap, d)
+		return S3v2(n, k, swap, d)
 	}
 }
 
@@ -292,6 +280,7 @@ This function is the main function of the package and takes 4 arguments as param
 - rank : big.Int, the rank of the desired set partition in the lexicographical order.
 - whichS3: [|0,4|], the desired version of S3 formula to use (4 is the fastest, 0 is the slowest).
 
+For the time complexity, read the README section Related, theorem 12 of the article
 Example usage:
 
     result := parallelunranking.UnrankDicho(5, 3, *big.NewInt(10), 4)
@@ -328,6 +317,7 @@ func UnrankDicho(n, k int, rank big.Int, whichS3 int) [][]int {
 	swap := false
 
 	for k > 1 {
+		fmt.Println(k)
 		listK = append(listK, int64(k))
 		var startTime int64
 		var endTime int64

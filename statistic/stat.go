@@ -9,6 +9,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
 	"github.com/AMAURYCU/setpartition_unrank/parallelunranking"
 	"github.com/AMAURYCU/setpartition_unrank/precalcul"
 )
@@ -111,7 +112,7 @@ func Stat(bsup int, nbPoints int, repetitions int, verbose bool) {
 		valuepre = append(valuepre, float64(sumtimepre)/float64(repetitions))
 		sumtimepre = 0
 	}
-	
+
 	buf += "t = " + ListToString(abs) + "\n"
 	for u := 0; u < 5; u++ {
 		buf += "l" + strconv.Itoa(u) + "=" + ListToStringFloat(ord[u]) + "\n"
@@ -149,18 +150,18 @@ func Stat(bsup int, nbPoints int, repetitions int, verbose bool) {
 }
 
 func ListToStringFloat(liste []float64) string {
-	
+
 	elements := make([]string, len(liste))
 	for i, v := range liste {
 		elements[i] = fmt.Sprintf("%f", v)
 	}
-	
+
 	chaine := "[" + strings.Join(elements, ", ") + "]"
 	return chaine
 }
 
 func ListToString(liste []int64) string {
-	
+
 	elements := make([]string, len(liste))
 	for i, v := range liste {
 		elements[i] = fmt.Sprintf("%d", v)

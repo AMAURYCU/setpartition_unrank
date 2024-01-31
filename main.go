@@ -7,12 +7,23 @@ import (
 	"math/rand"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/AMAURYCU/setpartition_unrank/parallelunranking"
 	"github.com/AMAURYCU/setpartition_unrank/precalcul"
 	"github.com/AMAURYCU/setpartition_unrank/statistic"
 )
+
+func listToString(liste []int64) string {
+	elements := make([]string, len(liste))
+	for i, v := range liste {
+		elements[i] = fmt.Sprintf("%d", v)
+	}
+	str := "[" + strings.Join(elements, ", ") + "]"
+
+	return str
+}
 
 func main() {
 
@@ -66,7 +77,7 @@ func handleOperationA(mode string, args []string) {
 			fmt.Println(parallelunranking.UnrankDicho(n, k, *k2, 4), k2)
 		}
 	case "S":
-		precalcul.Init()
+
 		c := parallelunranking.Stirling2Columns(n, k).Col1[n]
 		c.Sub(&c, big.NewInt(1))
 		precalcul.StirlingMatrix = statistic.StirlingTriangle(n, k)
@@ -104,12 +115,12 @@ func handleOperationR(mode string, args []string) {
 		c := parallelunranking.Stirling2Columns(n, k).Col1[n]
 		c.Sub(&c, big.NewInt(1))
 		r.Rand(rg, &c)
-		parallelunranking.UnrankDicho(n, k, r, 0)
-		fmt.Println("temps calcul prev col", parallelunranking.ListToString(parallelunranking.TimePreviousColumn))
+		fmt.Println(parallelunranking.UnrankDicho(n, k, r, 4))
+		fmt.Println("temps calcul prev col", listToString(parallelunranking.TimePreviousColumn))
 		fmt.Println("-----------------------------")
 		fmt.Println("k", statistic.ListToString(parallelunranking.TimePreviousColumnWithK))
 	case "S":
-		precalcul.Init()
+
 		precalcul.StirlingMatrix = statistic.StirlingTriangle(n, k)
 		r.Rand(rg, precalcul.StirlingMatrix[n][k])
 		fmt.Println(precalcul.UnrankDichoPre(n, k, r, 0), &r)
@@ -135,7 +146,6 @@ func handleOperationG(args []string) {
 		fmt.Println("Error: Arguments for Operation G must be numeric.")
 		printUsageAndExit()
 	}
-	precalcul.Init()
 	statistic.Stat(n, k, r, true)
 	a, b, c := statistic.Graph3d(n, 10, 10, r)
 	file, err := os.Create("graph3d.g")

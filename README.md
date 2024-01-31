@@ -125,5 +125,5 @@ warning : the ```G``` operation does not require ```-mode``` arguments
 ## Related
 
 This project is related to the implementation of our paper : 
-[Lexicographic unranking algorithms for the Twelvefold Way](link)
+[Lexicographic unranking algorithms for the Twelvefold Way](https://hal.science/hal-04411470v1)
 

@@ -6,12 +6,7 @@ import (
 
 /*_____________________________PRE CALCULS____________________________________*/
 var StirlingMatrix [2000][2000]*big.Int
-var vs3pre []func(n, k, d int) *big.Int
-
-func Init() {
-	vs3pre = append(vs3pre, s3v5pre)
-
-}
+var vs3pre = [5](func(n, k int, d int) *big.Int){S3v2pre, S3v2pre, S3v5pre}
 
 func lexicographicPermutationUnrank(n int, Pos [][]int) [][]int {
 	L := make([]int, n)
@@ -30,6 +25,19 @@ func lexicographicPermutationUnrank(n int, Pos [][]int) [][]int {
 	return P
 }
 
+//  Unrank set partition lexicographicaly.
+/*
+This function is the main function of the package and takes 4 arguments as parameters :
+- n : int, the cardinal of the set to be partitioned. n must be < 2000
+- k : int, the number of desired blocks in the result. k must be < 2000
+- rank : big.Int, the rank of the desired set partition in the lexicographical order.
+- whichS3: [|0,2|], the desired version of S3 formula to use (2 is the fastest, 0 is the slowest).
+For the time complexity, read the README section Related, theorem 12 of the article
+Example usage:
+
+    result := parallelunranking.UnrankDicho(5, 3, *big.NewInt(10), 4)
+    fmt.Println(result) // Output: [[1 2 3] [4] [5]]
+*/
 func UnrankDichoPre(n, k int, rank big.Int, vs3 int) [][]int {
 	n0 := n
 	res := make([][]int, 0)
@@ -110,7 +118,13 @@ func optimizedBlockDichoPre(n, k int, rank big.Int, whichS3 int) ([]int, big.Int
 	return res, *acc
 }
 
-func s3v4pre(n, k, d int) *big.Int {
+/*
+	    Implementation of the s3 formula (read the readme section Related proposition 9 for more details)
+		n - number of elements in the set
+		k - number of blocks desired
+		d - last element of the unranked prefix
+*/
+func S3v4pre(n, k, d int) *big.Int {
 	if d < 0 {
 		return big.NewInt(0)
 	}
@@ -158,7 +172,16 @@ func s3v4pre(n, k, d int) *big.Int {
 	return res
 }
 
-func s3v2pre(n, k, d int) *big.Int {
+/*
+	    Implementation of the s3 formula (read the readme section Related proposition 7 for more details)
+		computation time of the formula.
+		n - number of elements in the set
+		k - number of blocks desired
+		d - last element of the unranked prefix
+
+*/
+
+func S3v2pre(n, k, d int) *big.Int {
 	if d < 0 {
 		return big.NewInt(0)
 	}
@@ -187,10 +210,17 @@ func s3v2pre(n, k, d int) *big.Int {
 	return res
 }
 
-func s3v5pre(n, k, d int) *big.Int {
-	if 2*d < n { //d < (n - d) {
-		return s3v4pre(n, k, d)
+/*
+	    Take the best of s3v4 and s3v2
+		n - number of elements in the set
+		k - number of blocks desired
+		d - last element of the unranked prefix
+*/
+
+func S3v5pre(n, k, d int) *big.Int {
+	if 2*d < n {
+		return S3v4pre(n, k, d)
 	} else {
-		return s3v2pre(n, k, d)
+		return S3v2pre(n, k, d)
 	}
 }
