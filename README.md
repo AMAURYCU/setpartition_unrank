@@ -1,7 +1,7 @@
 
 # Setpartition_unrank
 
-A Go library to lexicographicaly unrank set partitions
+A Go library to lexicographically unrank set partitions
 
 
 ## Authors
