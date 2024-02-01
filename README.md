@@ -90,8 +90,7 @@ func main() {
 
 ## Performance 
 
-The computation time of the function parallelunranking.UnrankDicho(n,k,r) takes less than 1 second for 
-n = 1000, about 30 second for n = 3000 and about 5 minuts for n = 5000 on a modern computer.
+The computation time for the function parallelunranking.UnrankDicho(n, k, r) is less than 1 second for n = 1000, about 30 seconds for n = 3000, and approximately 5 minutes for n = 5000 on a modern computer.
 
 
 ## Executable application
