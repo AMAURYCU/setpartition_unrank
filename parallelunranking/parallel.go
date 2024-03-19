@@ -6,7 +6,6 @@
 package parallelunranking
 
 import (
-	"fmt"
 	"math/big"
 	"time"
 
@@ -317,7 +316,7 @@ func UnrankDicho(n, k int, rank big.Int, whichS3 int) [][]int {
 	swap := false
 
 	for k > 1 {
-		fmt.Println(k)
+		//fmt.Println(k)
 		listK = append(listK, int64(k))
 		var startTime int64
 		var endTime int64
